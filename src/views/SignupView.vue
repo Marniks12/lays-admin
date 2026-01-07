@@ -1,19 +1,21 @@
 <template>
   <div class="login-page">
     <div class="login-card">
-      <h1>Login</h1>
+      <h1>Create account</h1>
 
-      <form @submit.prevent="login">
+      <form @submit.prevent="signup">
+        <input v-model="firstName" placeholder="First name" required />
+        <input v-model="lastName" placeholder="Last name" required />
         <input v-model="email" type="email" placeholder="Email" required />
         <input v-model="password" type="password" placeholder="Password" required />
-        <button type="submit">Login</button>
+        <button type="submit">Create account</button>
       </form>
 
       <p v-if="error" class="error">{{ error }}</p>
 
       <p class="signup">
-        Nog geen account?
-        <span @click="goSignup">Maak er één</span>
+        Al een account?
+        <span @click="goLogin">Login</span>
       </p>
     </div>
   </div>
@@ -23,51 +25,36 @@
 import { ref } from "vue";
 import { useRouter } from "vue-router";
 
+const router = useRouter();
+const firstName = ref("");
+const lastName = ref("");
 const email = ref("");
 const password = ref("");
 const error = ref("");
-const router = useRouter();
 
-function decodeToken(token) {
-  try {
-    return JSON.parse(atob(token.split(".")[1]));
-  } catch {
-    return null;
-  }
-}
-
-const login = async () => {
+const signup = async () => {
   error.value = "";
 
-  const res = await fetch("http://localhost:3000/api/v1/user/auth", {
+  const res = await fetch("http://localhost:3000/api/v1/user", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({
+      firstName: firstName.value,
+      lastName: lastName.value,
       email: email.value,
       password: password.value,
     }),
   });
 
   if (!res.ok) {
-    error.value = "Login failed";
+    error.value = "Signup failed";
     return;
   }
 
-  const { token } = await res.json();
-  localStorage.setItem("token", token);
-
-  const payload = decodeToken(token);
-
-  if (payload?.role === "admin") {
-    router.push("/dashboard");
-  } else {
-    router.push("/vote"); // later kan dit configurator worden
-  }
+  router.push("/");
 };
 
-const goSignup = () => {
-  router.push("/signup");
-};
+const goLogin = () => router.push("/");
 </script>
 
 <style scoped>
@@ -83,7 +70,7 @@ const goSignup = () => {
   background: white;
   padding: 2rem;
   border-radius: 12px;
-  width: 320px;
+  width: 340px;
   text-align: center;
   box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
 }
@@ -91,7 +78,7 @@ const goSignup = () => {
 .login-card input {
   width: 100%;
   padding: 0.7rem;
-  margin-bottom: 1rem;
+  margin-bottom: 0.8rem;
   border-radius: 6px;
   border: 1px solid #ccc;
 }
@@ -101,9 +88,7 @@ const goSignup = () => {
   padding: 0.7rem;
   background: #e21b1b;
   color: white;
-  border: none;
   border-radius: 20px;
-  font-weight: bold;
 }
 
 .error {

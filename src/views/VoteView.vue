@@ -1,23 +1,18 @@
 <template>
   <div>
     <button @click="logout">Logout</button>
-
-    <h1>Admin Dashboard</h1>
-    <h2>Saved designs</h2>
+    <h1>Vote on designs</h1>
 
     <div class="grid">
-      <div v-for="d in designs" :key="d._id" class="card">
+      <div class="card" v-for="d in designs" :key="d._id">
         <img v-if="d.previewImage" :src="d.previewImage" />
 
         <p><strong>Color:</strong> {{ d.bagColor }}</p>
         <p><strong>Pattern:</strong> {{ d.pattern || "none" }}</p>
         <p><strong>Chips:</strong> {{ d.chipsType || "none" }}</p>
+        <p><strong>Votes:</strong> {{ d.votes }}</p>
 
-        <button @click="voteDesign(d._id)">
-          👍 Vote ({{ d.votes }})
-        </button>
-
-        <button @click="deleteDesign(d._id)">❌ Delete</button>
+        <button @click="vote(d._id)">👍 Vote</button>
       </div>
     </div>
   </div>
@@ -31,27 +26,13 @@ const router = useRouter();
 const designs = ref([]);
 
 const loadDesigns = async () => {
-  const res = await fetch("http://localhost:3000/api/v1/design", {
-    headers: {
-      Authorization: "Bearer " + localStorage.getItem("token"),
-    },
-  });
+  const res = await fetch("http://localhost:3000/api/v1/design");
   designs.value = await res.json();
 };
 
-const voteDesign = async (id) => {
+const vote = async (id) => {
   await fetch(`http://localhost:3000/api/v1/design/${id}/vote`, {
     method: "POST",
-    headers: {
-      Authorization: "Bearer " + localStorage.getItem("token"),
-    },
-  });
-  loadDesigns();
-};
-
-const deleteDesign = async (id) => {
-  await fetch(`http://localhost:3000/api/v1/design/${id}`, {
-    method: "DELETE",
     headers: {
       Authorization: "Bearer " + localStorage.getItem("token"),
     },
@@ -71,19 +52,18 @@ onMounted(loadDesigns);
 .grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
-  gap: 16px;
+  gap: 20px;
 }
 
 .card {
   border: 1px solid #ccc;
-  padding: 12px;
-  border-radius: 8px;
+  padding: 10px;
+  border-radius: 10px;
 }
 
-.card img {
+img {
   width: 100%;
-  border-radius: 6px;
-  margin-bottom: 8px;
+  height: 140px;
+  object-fit: contain;
 }
 </style>
-
