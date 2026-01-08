@@ -30,6 +30,7 @@ const goCommunity = () => {
 </script>
 
 <style scoped>
+  
 .configurator-wrapper {
   height: 100vh;
   display: flex;
