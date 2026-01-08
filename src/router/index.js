@@ -37,14 +37,13 @@ const router = createRouter({
   routes,
 });
 
-// 🔑 JWT payload uitlezen (zonder jwt-decode)
+// 🔑 JWT payload uitlezen (zonder extra package)
 function getTokenPayload() {
   const token = localStorage.getItem("token");
   if (!token) return null;
 
   try {
-    const base64 = token.split(".")[1];
-    return JSON.parse(atob(base64));
+    return JSON.parse(atob(token.split(".")[1]));
   } catch {
     return null;
   }
@@ -54,12 +53,12 @@ router.beforeEach((to) => {
   const token = localStorage.getItem("token");
   const payload = getTokenPayload();
 
-  // ❌ niet ingelogd → beschermde routes blokkeren
+  // 🔒 beschermde routes
   if (to.meta.requiresAuth && !token) {
     return "/";
   }
 
-  // ❌ token kapot → force logout
+  // ❌ corrupte token
   if (token && !payload) {
     localStorage.removeItem("token");
     return "/";
