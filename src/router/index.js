@@ -10,24 +10,24 @@ const routes = [
   {
     path: "/signup",
     name: "signup",
-    component: () => import("../views/SignupView.vue"),
+    component: () => import("../views/signupView.vue"),
   },
   {
     path: "/configurator",
     name: "configurator",
-    component: () => import("../views/ConfiguratorView.vue"),
+    component: () => import("../views/configuratorView.vue"),
     meta: { requiresAuth: true, role: "user" },
   },
   {
     path: "/dashboard",
     name: "dashboard",
-    component: () => import("../views/DashboardView.vue"),
+    component: () => import("../views/dashboardView.vue"),
     meta: { requiresAuth: true, role: "admin" },
   },
   {
     path: "/vote",
     name: "vote",
-    component: () => import("../views/VoteView.vue"),
+    component: () => import("../views/voteView.vue"),
     meta: { requiresAuth: true, role: "user" },
   },
 ];
