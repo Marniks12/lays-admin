@@ -68,4 +68,3 @@ const goCommunity = () => {
   cursor: pointer;
 }
 </style>
-

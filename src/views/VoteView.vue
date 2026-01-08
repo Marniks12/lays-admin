@@ -2,10 +2,7 @@
   <div class="page">
     <!-- TOP BAR -->
     <header class="topbar">
-      <img
-        src="/ar-lays-big-change-ar-lays-4x3-d080a2f7f0aa45bbab0fccd2078b7152.jpg"
-        class="logo"
-      />
+      <img src="/public/ar-lays-big-change-ar-lays-4x3-d080a2f7f0aa45bbab0fccd2078b7152.jpg" class="logo" />
       <div class="actions">
         <button class="secondary" @click="goConfigurator">
           ← Terug naar configurator
@@ -46,14 +43,9 @@ const router = useRouter();
 const designs = ref([]);
 const error = ref("");
 
-/**
- * 👉 API base URL uit environment variables
- */
-const API_URL = import.meta.env.VITE_API_URL;
-
 const loadDesigns = async () => {
   try {
-    const res = await fetch(`${API_URL}/api/v1/design/public`);
+    const res = await fetch("http://localhost:3000/api/v1/design/public");
     if (!res.ok) throw new Error();
     designs.value = await res.json();
   } catch {
@@ -65,12 +57,12 @@ const vote = async (id) => {
   const token = localStorage.getItem("token");
 
   const res = await fetch(
-    `${API_URL}/api/v1/design/${id}/vote`,
+    `http://localhost:3000/api/v1/design/${id}/vote`,
     {
       method: "POST",
       headers: token
         ? { Authorization: "Bearer " + token }
-        : {},
+        : {}
     }
   );
 
@@ -110,7 +102,7 @@ onMounted(loadDesigns);
   align-items: center;
   justify-content: space-between;
   padding: 0 30px;
-  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.15);
+  box-shadow: 0 4px 15px rgba(0,0,0,0.15);
 }
 
 .logo {
@@ -144,7 +136,7 @@ h1 {
   background: #fff8e1;
   border-radius: 18px;
   padding: 18px;
-  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
+  box-shadow: 0 10px 25px rgba(0,0,0,0.15);
   text-align: center;
 }
 

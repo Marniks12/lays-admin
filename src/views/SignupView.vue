@@ -32,36 +32,26 @@ const email = ref("");
 const password = ref("");
 const error = ref("");
 
-/**
- * 👉 API base URL uit Vercel environment variables
- */
-const API_URL = import.meta.env.VITE_API_URL;
-
 const signup = async () => {
   error.value = "";
 
-  try {
-    const res = await fetch(`${API_URL}/api/v1/user`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        firstName: firstName.value,
-        lastName: lastName.value,
-        email: email.value,
-        password: password.value,
-      }),
-    });
+  const res = await fetch("http://localhost:3000/api/v1/user", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({
+      firstName: firstName.value,
+      lastName: lastName.value,
+      email: email.value,
+      password: password.value,
+    }),
+  });
 
-    if (!res.ok) {
-      error.value = "Signup failed";
-      return;
-    }
-
-    router.push("/");
-  } catch (err) {
-    error.value = "Server unreachable";
-    console.error(err);
+  if (!res.ok) {
+    error.value = "Signup failed";
+    return;
   }
+
+  router.push("/");
 };
 
 const goLogin = () => router.push("/");
