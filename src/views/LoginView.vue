@@ -28,6 +28,11 @@ const password = ref("");
 const error = ref("");
 const router = useRouter();
 
+/**
+ * 👉 API base URL uit Vercel environment variables
+ */
+const API_URL = import.meta.env.VITE_API_URL;
+
 function decodeToken(token) {
   try {
     return JSON.parse(atob(token.split(".")[1]));
@@ -39,32 +44,37 @@ function decodeToken(token) {
 const login = async () => {
   error.value = "";
 
-  const res = await fetch("http://localhost:3000/api/v1/user/auth", {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({
-      email: email.value,
-      password: password.value,
-    }),
-  });
+  try {
+    const res = await fetch(`${API_URL}/api/v1/user/auth`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        email: email.value,
+        password: password.value,
+      }),
+    });
 
-  if (!res.ok) {
-    error.value = "Login failed";
-    return;
-  }
+    if (!res.ok) {
+      error.value = "Login failed";
+      return;
+    }
 
-  const { token } = await res.json();
-  localStorage.setItem("token", token);
+    const { token } = await res.json();
+    localStorage.setItem("token", token);
 
-  const payload = decodeToken(token);
+    const payload = decodeToken(token);
 
-  // ✅ ADMIN → dashboard
-  if (payload?.role === "admin") {
-    router.push("/dashboard");
-  } 
-  // ✅ USER → CONFIGURATOR
-  else {
-    router.push("/configurator");
+    // ✅ ADMIN → dashboard
+    if (payload?.role === "admin") {
+      router.push("/dashboard");
+    }
+    // ✅ USER → CONFIGURATOR
+    else {
+      router.push("/configurator");
+    }
+  } catch (err) {
+    error.value = "Server unreachable";
+    console.error(err);
   }
 };
 

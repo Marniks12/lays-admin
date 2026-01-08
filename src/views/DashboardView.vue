@@ -2,7 +2,11 @@
   <div class="page">
     <!-- TOPBAR -->
     <header class="topbar">
-      <img src="/public/ar-lays-big-change-ar-lays-4x3-d080a2f7f0aa45bbab0fccd2078b7152.jpg" class="logo" alt="Lays logo" />
+      <img
+        src="/ar-lays-big-change-ar-lays-4x3-d080a2f7f0aa45bbab0fccd2078b7152.jpg"
+        class="logo"
+        alt="Lays logo"
+      />
 
       <button class="logout" @click="logout">Logout</button>
     </header>
@@ -10,7 +14,7 @@
     <!-- CONTENT -->
     <main class="content">
       <h1>Admin dashboard</h1>
-      
+
       <div class="grid">
         <div v-for="d in designs" :key="d._id" class="card">
           <img v-if="d.previewImage" :src="d.previewImage" />
@@ -22,7 +26,7 @@
           <p class="votes">👍 {{ d.votes }} votes</p>
 
           <button class="danger" @click="deleteDesign(d._id)">
-             Delete design
+            Delete design
           </button>
         </div>
       </div>
@@ -37,9 +41,14 @@ import { useRouter } from "vue-router";
 const router = useRouter();
 const designs = ref([]);
 
+/**
+ * 👉 API base URL uit environment variables
+ */
+const API_URL = import.meta.env.VITE_API_URL;
+
 const loadDesigns = async () => {
   try {
-    const res = await fetch("http://localhost:3000/api/v1/design", {
+    const res = await fetch(`${API_URL}/api/v1/design`, {
       headers: {
         Authorization: "Bearer " + localStorage.getItem("token"),
       },
@@ -54,7 +63,7 @@ const loadDesigns = async () => {
 const deleteDesign = async (id) => {
   if (!confirm("Are you sure you want to delete this design?")) return;
 
-  await fetch(`http://localhost:3000/api/v1/design/${id}`, {
+  await fetch(`${API_URL}/api/v1/design/${id}`, {
     method: "DELETE",
     headers: {
       Authorization: "Bearer " + localStorage.getItem("token"),
@@ -87,7 +96,7 @@ onMounted(loadDesigns);
   align-items: center;
   justify-content: space-between;
   padding: 0 30px;
-  box-shadow: 0 4px 15px rgba(0,0,0,0.15);
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.15);
 }
 
 .logo {
@@ -114,11 +123,6 @@ h1 {
   margin-bottom: 5px;
 }
 
-.subtitle {
-  margin-bottom: 25px;
-  color: #555;
-}
-
 /* GRID */
 .grid {
   display: grid;
@@ -131,7 +135,7 @@ h1 {
   background: #fff8e1;
   border-radius: 18px;
   padding: 15px;
-  box-shadow: 0 6px 18px rgba(0,0,0,0.15);
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.15);
   text-align: center;
 }
 
