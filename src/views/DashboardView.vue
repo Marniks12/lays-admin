@@ -1,25 +1,32 @@
 <template>
-  <div>
-    <button @click="logout">Logout</button>
+  <div class="page">
+    <!-- TOPBAR -->
+    <header class="topbar">
+      <img src="/public/ar-lays-big-change-ar-lays-4x3-d080a2f7f0aa45bbab0fccd2078b7152.jpg" class="logo" alt="Lays logo" />
 
-    <h1>Admin Dashboard</h1>
-    <h2>Saved designs</h2>
+      <button class="logout" @click="logout">Logout</button>
+    </header>
 
-    <div class="grid">
-      <div v-for="d in designs" :key="d._id" class="card">
-        <img v-if="d.previewImage" :src="d.previewImage" />
+    <!-- CONTENT -->
+    <main class="content">
+      <h1>Admin dashboard</h1>
+      
+      <div class="grid">
+        <div v-for="d in designs" :key="d._id" class="card">
+          <img v-if="d.previewImage" :src="d.previewImage" />
 
-        <p><strong>Color:</strong> {{ d.bagColor }}</p>
-        <p><strong>Pattern:</strong> {{ d.pattern || "none" }}</p>
-        <p><strong>Chips:</strong> {{ d.chipsType || "none" }}</p>
+          <p><b>Color:</b> {{ d.bagColor }}</p>
+          <p><b>Pattern:</b> {{ d.pattern || "none" }}</p>
+          <p><b>Chips:</b> {{ d.chipsType || "none" }}</p>
 
-        <button @click="voteDesign(d._id)">
-          👍 Vote ({{ d.votes }})
-        </button>
+          <p class="votes">👍 {{ d.votes }} votes</p>
 
-        <button @click="deleteDesign(d._id)">❌ Delete</button>
+          <button class="danger" @click="deleteDesign(d._id)">
+             Delete design
+          </button>
+        </div>
       </div>
-    </div>
+    </main>
   </div>
 </template>
 
@@ -31,31 +38,29 @@ const router = useRouter();
 const designs = ref([]);
 
 const loadDesigns = async () => {
-  const res = await fetch("http://localhost:3000/api/v1/design", {
-    headers: {
-      Authorization: "Bearer " + localStorage.getItem("token"),
-    },
-  });
-  designs.value = await res.json();
-};
+  try {
+    const res = await fetch("http://localhost:3000/api/v1/design", {
+      headers: {
+        Authorization: "Bearer " + localStorage.getItem("token"),
+      },
+    });
 
-const voteDesign = async (id) => {
-  await fetch(`http://localhost:3000/api/v1/design/${id}/vote`, {
-    method: "POST",
-    headers: {
-      Authorization: "Bearer " + localStorage.getItem("token"),
-    },
-  });
-  loadDesigns();
+    designs.value = await res.json();
+  } catch (err) {
+    console.error("Load failed", err);
+  }
 };
 
 const deleteDesign = async (id) => {
+  if (!confirm("Are you sure you want to delete this design?")) return;
+
   await fetch(`http://localhost:3000/api/v1/design/${id}`, {
     method: "DELETE",
     headers: {
       Authorization: "Bearer " + localStorage.getItem("token"),
     },
   });
+
   loadDesigns();
 };
 
@@ -68,22 +73,94 @@ onMounted(loadDesigns);
 </script>
 
 <style scoped>
-.grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
-  gap: 16px;
+/* PAGE */
+.page {
+  min-height: 100vh;
+  background: linear-gradient(#ffe066, #ffd000);
 }
 
+/* TOPBAR */
+.topbar {
+  height: 70px;
+  background: #ffcc00;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 30px;
+  box-shadow: 0 4px 15px rgba(0,0,0,0.15);
+}
+
+.logo {
+  height: 42px;
+}
+
+.logout {
+  background: #c70000;
+  color: white;
+  border: none;
+  padding: 10px 18px;
+  border-radius: 20px;
+  font-weight: bold;
+  cursor: pointer;
+}
+
+/* CONTENT */
+.content {
+  padding: 30px;
+}
+
+h1 {
+  color: #c70000;
+  margin-bottom: 5px;
+}
+
+.subtitle {
+  margin-bottom: 25px;
+  color: #555;
+}
+
+/* GRID */
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+  gap: 22px;
+}
+
+/* CARD */
 .card {
-  border: 1px solid #ccc;
-  padding: 12px;
-  border-radius: 8px;
+  background: #fff8e1;
+  border-radius: 18px;
+  padding: 15px;
+  box-shadow: 0 6px 18px rgba(0,0,0,0.15);
+  text-align: center;
 }
 
 .card img {
   width: 100%;
-  border-radius: 6px;
-  margin-bottom: 8px;
+  height: 170px;
+  object-fit: contain;
+  background: white;
+  border-radius: 12px;
+  margin-bottom: 12px;
+}
+
+.votes {
+  margin: 10px 0;
+  font-weight: bold;
+}
+
+/* BUTTON */
+.danger {
+  background: #d71920;
+  color: white;
+  border: none;
+  padding: 10px 18px;
+  border-radius: 20px;
+  font-weight: bold;
+  cursor: pointer;
+}
+
+.danger:hover {
+  background: #b8161b;
 }
 </style>
-

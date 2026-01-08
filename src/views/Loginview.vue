@@ -58,10 +58,13 @@ const login = async () => {
 
   const payload = decodeToken(token);
 
+  // ✅ ADMIN → dashboard
   if (payload?.role === "admin") {
     router.push("/dashboard");
-  } else {
-    router.push("/vote"); // later kan dit configurator worden
+  } 
+  // ✅ USER → CONFIGURATOR
+  else {
+    router.push("/configurator");
   }
 };
 

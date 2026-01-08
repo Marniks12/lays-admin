@@ -13,6 +13,12 @@ const routes = [
     component: () => import("../views/SignupView.vue"),
   },
   {
+    path: "/configurator",
+    name: "configurator",
+    component: () => import("../views/ConfiguratorView.vue"),
+    meta: { requiresAuth: true, role: "user" },
+  },
+  {
     path: "/dashboard",
     name: "dashboard",
     component: () => import("../views/DashboardView.vue"),
@@ -24,12 +30,6 @@ const routes = [
     component: () => import("../views/VoteView.vue"),
     meta: { requiresAuth: true, role: "user" },
   },
-  // (later)
-  // {
-  //   path: "/configurator",
-  //   component: () => import("../views/ConfiguratorView.vue"),
-  //   meta: { requiresAuth: true, role: "user" },
-  // },
 ];
 
 const router = createRouter({
@@ -67,14 +67,17 @@ router.beforeEach((to) => {
 
   // ✅ al ingelogd → niet terug naar login/signup
   if ((to.path === "/" || to.path === "/signup") && payload) {
-    return payload.role === "admin" ? "/dashboard" : "/vote";
+    return payload.role === "admin"
+      ? "/dashboard"
+      : "/configurator";
   }
 
   // 🔐 role-based toegang
   if (to.meta.role && payload?.role !== to.meta.role) {
-    return payload.role === "admin" ? "/dashboard" : "/vote";
+    return payload.role === "admin"
+      ? "/dashboard"
+      : "/configurator";
   }
 });
 
 export default router;
-
