@@ -6,8 +6,10 @@
 </script>
 
 <style>
-  body {
-  font-family: Arial, sans-serif;
+* {
+  font-family: Arial, sans-serif !important;
 }
-
 </style>
+
+
+
